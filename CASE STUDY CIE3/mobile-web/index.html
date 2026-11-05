@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101418">
+  <meta name="description" content="Interactive furniture-rendering laboratory with Phong lighting, leather texturing, bump mapping, and viewport transformation.">
+  <title>Render Lab — Furniture Graphics Explorer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101418'/%3E%3Cpath d='M16 38h32v12H16zM20 20h24v20H20z' fill='%237ee0c3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css?v=3">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js"}}</script>
+  <script defer src="./ui.js"></script>
+  <script type="module" src="./scene.js"></script>
+</head>
+<body>
+  <div class="lab-shell">
+
+    <!-- LEFT CONTROL RAIL -->
+    <aside class="lab-rail" aria-label="Rendering controls">
+      <div class="rail-head">
+        <div class="rail-brand">
+          <span class="rail-logo" aria-hidden="true"></span>
+          <div>
+            <strong>Render Lab</strong>
+            <small>Furniture Graphics Explorer</small>
+          </div>
+        </div>
+        <a class="rail-source" href="https://github.com/Rishikeshsanin/Computer-Graphics-and-Virtual-Reality/tree/main/CASE%20STUDY%20CIE3" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </div>
+
+      <nav class="rail-tabs" role="tablist" aria-label="Select experiment">
+        <button id="tab-light" class="rail-tab active" role="tab" data-tab="light" aria-selected="true" aria-controls="panel-light">Lighting</button>
+        <button id="tab-material" class="rail-tab" role="tab" data-tab="material" aria-selected="false" aria-controls="panel-material">Material</button>
+        <button id="tab-mapping" class="rail-tab" role="tab" data-tab="mapping" aria-selected="false" aria-controls="panel-mapping">Mapping</button>
+      </nav>
+
+      <div class="rail-scroll">
+        <!-- LIGHTING -->
+        <section id="panel-light" class="rail-panel" role="tabpanel" aria-labelledby="tab-light">
+          <header class="panel-head">
+            <small>Experiment 01</small>
+            <h2>Phong illumination</h2>
+            <p>Adjust ambient, diffuse, and specular response.</p>
+          </header>
+
+          <div class="option-stack" role="group" aria-label="Lighting mode">
+            <button class="option" data-light="ambient" aria-pressed="false">
+              <span class="option-index">A</span>
+              <span><strong>Ambient</strong><small>Uniform base light</small></span>
+            </button>
+            <button class="option" data-light="diffuse" aria-pressed="false">
+              <span class="option-index">B</span>
+              <span><strong>Diffuse</strong><small>Angle-based shading</small></span>
+            </button>
+            <button class="option selected" data-light="specular" aria-pressed="true">
+              <span class="option-index">C</span>
+              <span><strong>Specular</strong><small>Glossy highlights</small></span>
+            </button>
+          </div>
+
+          <div class="slider-card">
+            <label for="daylight">Daylight intensity</label>
+            <div class="slider-line">
+              <input id="daylight" type="range" min="0.2" max="1.8" step="0.05" value="1">
+              <output id="daylight-value">1.00</output>
+            </div>
+          </div>
+
+          <div class="slider-card">
+            <label for="specular">Sofa specular</label>
+            <div class="slider-line">
+              <input id="specular" type="range" min="0" max="1" step="0.05" value="0.55">
+              <output id="specular-value">0.55</output>
+            </div>
+          </div>
+
+          <div class="formula-card">
+            <small>Phong model</small>
+            <p>I = I<sub>ambient</sub> + I<sub>diffuse</sub> + I<sub>specular</sub></p>
+          </div>
+        </section>
+
+        <!-- MATERIAL -->
+        <section id="panel-material" class="rail-panel" hidden role="tabpanel" aria-labelledby="tab-material">
+          <header class="panel-head">
+            <small>Experiment 02</small>
+            <h2>Leather detail</h2>
+            <p>Texture changes colour; bump mapping changes light response.</p>
+          </header>
+
+          <div class="material-card">
+            <div class="material-chip" aria-hidden="true"></div>
+            <div>
+              <strong>Brown leather</strong>
+              <small>Procedural albedo and bump maps</small>
+            </div>
+          </div>
+
+          <label class="switch-card">
+            <span><strong>Colour texture</strong><small>UV-mapped grain</small></span>
+            <input id="texture-enabled" type="checkbox" checked>
+            <span class="pill-switch"></span>
+          </label>
+
+          <label class="switch-card">
+            <span><strong>Bump mapping</strong><small>Fine surface variation</small></span>
+            <input id="bump-enabled" type="checkbox" checked>
+            <span class="pill-switch"></span>
+          </label>
+
+          <div class="slider-card">
+            <label for="bump-strength">Bump strength</label>
+            <div class="slider-line">
+              <input id="bump-strength" type="range" min="0" max="0.15" step="0.01" value="0.06">
+              <output id="bump-strength-value">0.06</output>
+            </div>
+          </div>
+
+          <button id="focus-sofa" class="primary-button">Inspect sofa ↗</button>
+        </section>
+
+        <!-- MAPPING -->
+        <section id="panel-mapping" class="rail-panel" hidden role="tabpanel" aria-labelledby="tab-mapping">
+          <header class="panel-head">
+            <small>Experiment 03</small>
+            <h2>Window to viewport</h2>
+            <p>Convert logical coordinates into phone-screen pixels.</p>
+          </header>
+
+          <div class="mapping-card">
+            <div class="logic-box">
+              <span>X</span>
+              <span class="logic-dot" id="logical-dot"></span>
+            </div>
+            <span class="mapping-arrow">→</span>
+            <div class="device-box">
+              <span class="device-dot" id="phone-dot"></span>
+            </div>
+          </div>
+
+          <div class="slider-card">
+            <label for="logical-x">Logical X</label>
+            <div class="slider-line">
+              <input id="logical-x" type="range" min="-1" max="1" step="0.05" value="0.25">
+              <output id="logical-x-value">0.25</output>
+            </div>
+          </div>
+
+          <div class="slider-card">
+            <label for="logical-y">Logical Y</label>
+            <div class="slider-line">
+              <input id="logical-y" type="range" min="-1" max="1" step="0.05" value="-0.3">
+              <output id="logical-y-value">−0.30</output>
+            </div>
+          </div>
+
+          <div class="result-card">
+            <div>
+              <small>Phone pixels</small>
+              <strong id="mapped-result">(657.5, 708.0)</strong>
+            </div>
+            <button id="mapping-reset">Reset</button>
+          </div>
+
+          <p class="footnote">Example viewport: X = 70…1010, Y = 120…1800, bottom-left origin.</p>
+
+          <label class="switch-card">
+            <span><strong>Inset viewport</strong><small>Change rendered camera rectangle</small></span>
+            <input id="inset-enabled" type="checkbox">
+            <span class="pill-switch"></span>
+          </label>
+        </section>
+      </div>
+
+      <div class="rail-foot">
+        <button id="help-button" aria-haspopup="dialog">How to use</button>
+      </div>
+    </aside>
+
+    <!-- RIGHT 3D WORKSPACE -->
+    <main class="lab-stage" aria-label="Interactive 3D furniture showroom">
+      <canvas id="showroom" aria-label="3D showroom showing a red velvet chair and brown leather sofa." tabindex="0"></canvas>
+
+      <div class="stage-overlay">
+        <div class="stage-meta">
+          <span class="live-pill"><i></i>Live render</span>
+          <span id="mode-caption" class="mode-pill">Full Phong lighting</span>
+        </div>
+
+        <div class="stage-toolbar">
+          <div class="focus-group" role="group" aria-label="Camera focus">
+            <button class="focus-button active" data-focus="room" aria-pressed="true">Room</button>
+            <button class="focus-button" data-focus="chair" aria-pressed="false">Chair</button>
+            <button class="focus-button" data-focus="sofa" aria-pressed="false">Sofa</button>
+          </div>
+
+          <div class="camera-group">
+            <button id="zoom-out" class="camera-button" aria-label="Zoom out">−</button>
+            <button id="reset-view" class="camera-button" aria-label="Reset camera">↺</button>
+            <button id="zoom-in" class="camera-button" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+
+        <p id="stage-hint" class="stage-note">Drag to orbit · pinch or scroll to zoom</p>
+      </div>
+
+      <div id="loading" class="state-screen" role="status">
+        <span class="spinner"></span>
+        <strong>Preparing showroom</strong>
+        <span>Loading interactive 3D objects…</span>
+      </div>
+
+      <div id="error-message" class="state-screen error" role="alert" hidden>
+        <strong>3D view unavailable</strong>
+        <span id="error-detail">Try another browser or enable WebGL hardware acceleration.</span>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="help-dialog" class="lab-dialog">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2>How to explore</h2>
+        <button class="dialog-close" aria-label="Close help">✕</button>
+      </div>
+      <p>Drag the scene to rotate. Pinch, scroll, or use the camera buttons to zoom.</p>
+      <p>Use <strong>Room / Chair / Sofa</strong> to change camera focus. The left rail contains lighting, material, and mapping experiments.</p>
+      <p class="dialog-note">This is a browser-based educational 3D showroom, not device-tracked WebXR.</p>
+      <button class="primary-button" value="close">Got it</button>
+    </form>
+  </dialog>
+</body>
+</html>
