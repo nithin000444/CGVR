@@ -2,11 +2,11 @@
 
 # Furniture Studio · Mobile & Desktop Web
 
-<p><a href="https://cgvr-furniture-studio.vercel.app/"><img alt="Launch live browser experience" src="https://img.shields.io/badge/LAUNCH%20LIVE%20DEMO-Open%20Furniture%20Studio-137d8e?style=for-the-badge"></a></p>
+<p><a href="[https://cgvr-furniture-studio.vercel.app/](https://cgvr-mobile-web.vercel.app)"><img alt="Launch live browser experience" src="https://img.shields.io/badge/LAUNCH%20LIVE%20DEMO-Open%20Furniture%20Studio-137d8e?style=for-the-badge"></a></p>
 
 An independent, responsive **Three.js furniture studio** that runs in a normal desktop or phone browser. It supplements the existing Unity desktop project—without modifying it.
 
-**Live URL:** **https://cgvr-furniture-studio.vercel.app/**
+**Live URL:** **[https://cgvr-furniture-studio.vercel.app/](https://cgvr-mobile-web.vercel.app)**
 
 ## Explore
 
@@ -22,7 +22,7 @@ The default viewport example is `(0.25,-0.30) → (657.5,708.0)` for the defined
 
 ## Deployment and status
 
-- **Production host:** Vercel · [open deployment](https://cgvr-furniture-studio.vercel.app/).
+- **Production host:** Vercel · [open deployment]([https://cgvr-furniture-studio.vercel.app/](https://cgvr-mobile-web.vercel.app)).
 - The deployment was verified READY; the page and its `styles.css`, `scene.js` and `ui.js` files returned HTTP 200.
 - **Not yet verified:** appearance and touch behavior on a physical iPhone/Android device. Capture and test on real devices before treating it as mobile acceptance-tested.
 - **Not camera AR:** no phone-camera access, device tracking, plane detection, WebXR session or real-world furniture placement.
